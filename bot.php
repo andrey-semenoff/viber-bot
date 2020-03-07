@@ -39,7 +39,7 @@ try {
         $data = parseWaterValue('/^вода\s*(\d+)\s*кв\s*(\d+)$/iu', $reply);
         $answer = "Извините, я не могу разобрать ваши показания!\nПопробуйте еще раз!";
         if( $data ) {
-            $answer = "Подтвердите правильность данных!\nВы собираетесь передать следующие показания для квартиры №{$data['flat']}:\n- вода: {$data['value']}";
+            $answer = "Подтвердите правильность данных!\nВы собираетесь передать следующие показания для квартиры № {$data['flat']}:\n- вода: {$data['value']}";
         }
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
@@ -57,6 +57,7 @@ try {
                     ->setTextVAlign('middle')
                     ->setBgColor('#c82333')
                     ->setActionBody("canceled вода {$data['value']} кв {$data['flat']}"),
+
                     (new \Viber\Api\Keyboard\Button())
                     ->setColumns(3)
                     ->setText('<font color="#fff">Подтверждаю</font>')
@@ -75,7 +76,7 @@ try {
         $data = parseWaterValue('/^confirmed\sвода\s*(\d+)\s*кв\s*(\d+)$/iu', $reply);
         $answer = "Извините, я не могу разобрать ваши показания!\nПопробуйте еще раз!";
         if( $data ) {
-            $answer = "Спасибо!\nПриняты показания для квартиры №{$data['flat']}:\n- вода: {$data['value']}";
+            $answer = "Спасибо!\nПриняты показания для квартиры № {$data['flat']}:\n- вода: {$data['value']}";
         }
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
@@ -90,7 +91,7 @@ try {
         $flat = parseSingleValue('/^canceled\sкв\s*(\d+)$/iu', $reply);
         $answer = "Извините, я не могу разобрать ваш ответ!\nПопробуйте еще раз!";
         if( $flat ) {
-            $answer = "Вы отменили передачу показаний для квартиры №{$flat}";
+            $answer = "Вы отменили передачу показаний для квартиры № {$flat}";
         }
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
@@ -100,7 +101,7 @@ try {
         );
     })
 
-    ->onText('/^help\s(.*)$/iu', function ($event) use ($bot, $botSender) {
+    ->onText('/^help\s(.*\s?)$/iu', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
         $hint = parseSingleValue('/^help\s*(.*)$/iu', $reply);
         $answer = "Извините, я не могу разобрать ваше сообщение!\nПопробуйте еще раз!";
@@ -124,17 +125,16 @@ try {
                 ->setReceiver($event->getSender()->getId())
                 ->setText($answer)
                 ->setKeyboard(
-                    (new \Viber\Api\Keyboard)
-                        ->setButtons([
-                            (new \Viber\Api\Keyboard\Button())
-                                ->setColumns(6)
-                                ->setText('<font color="#fff">Как передать показания воды?</font>')
-                                ->setTextSize('large')
-                                ->setTextHAlign('center')
-                                ->setTextVAlign('middle')
-                                ->setBgColor('#17a2b8')
-                                ->setActionBody("help Чтобы передать показания воды введите сообщение в следующем формате:\nвода X кв Y\nгде Х - показания водомера, Y - номер квартиры.")
-                        ])
+                    (new \Viber\Api\Keyboard)->setButtons([
+                        (new \Viber\Api\Keyboard\Button())
+                            ->setColumns(6)
+                            ->setText('<font color="#fff">Как передать показания воды?</font>')
+                            ->setTextSize('large')
+                            ->setTextHAlign('center')
+                            ->setTextVAlign('middle')
+                            ->setBgColor('#17a2b8')
+                            ->setActionBody("help Чтобы передать показания воды введите сообщение в следующем формате:\nвода X кв Y\nгде Х - показания водомера, Y - номер квартиры.")
+                    ])
                 )
         );
     })
