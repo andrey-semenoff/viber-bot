@@ -34,13 +34,55 @@ try {
             ->setSender($botSender)
             ->setText($msg);
     })
-    ->onText('/вода\s*(\d+)/i', function ($event) use ($bot, $botSender) {
+    ->onText('/вода\s*(\d+)\s*кв\s*(\d+)/i', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
         var_dump($reply);
+        $data = parseWaterValue($reply);
         $answer = "Извините, я не могу разобрать ваши показания воды! Попробуйте еще раз!";
         if( $reply ) {
-            $answer = "Спасибо! Приняты показания воды: '123' для квартиры: '1' - $reply";
+            $answer = "Подтвердите правильность данных! Вы собираетесь передать показания воды: '{$data['value']}' для квартиры: '{$data['flat']}' - $reply";
         }
+        $bot->getClient()->sendMessage(
+            (new \Viber\Api\Message\Text())
+            ->setSender($botSender)
+            ->setReceiver($event->getSender()->getId())
+            ->setText($answer)
+            ->setKeyboard(
+                (new \Viber\Api\Keyboard)
+                ->setButtons([
+                    (new \Viber\Api\Keyboard\Button())
+                    ->setColumns(3)
+                    ->setText('Отмена')
+                    ->setActionBody("canceled вода {$data['value']} кв {$data['flat']}"),
+                    (new \Viber\Api\Keyboard\Button())
+                    ->setColumns(3)
+                    ->setText('Подтверждаю')
+                    ->setActionBody("confirmed вода {$data['value']} кв {$data['flat']}"),
+                ])
+            )
+        );
+    })
+    ->onText('/confirmed\sвода\s*(\d+)\s*кв\s*(\d+)/i', function ($event) use ($bot, $botSender) {
+        $reply = $event->getMessage()->getText();
+        $data = parseWaterValue($reply);
+//        $answer = "Извините, я не могу разобрать ваши показания воды! Попробуйте еще раз!";
+//        if( $reply ) {
+            $answer = "Спасибо! Приняты показания воды: '{$data['value']}' для квартиры: '{$data['flat']}'";
+//        }
+        $bot->getClient()->sendMessage(
+            (new \Viber\Api\Message\Text())
+            ->setSender($botSender)
+            ->setReceiver($event->getSender()->getId())
+            ->setText($answer)
+        );
+    })
+    ->onText('/canceled\sвода\s*(\d+)\s*кв\s*(\d+)/i', function ($event) use ($bot, $botSender) {
+        $reply = $event->getMessage()->getText();
+        $data = parseWaterValue($reply);
+//        $answer = "Извините, я не могу разобрать ваши показания воды! Попробуйте еще раз!";
+//        if( $reply ) {
+            $answer = "Вы отменили передачу показания воды: '{$data['value']}' для квартиры: '{$data['flat']}'";
+//        }
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
             ->setSender($botSender)
@@ -78,4 +120,16 @@ try {
     ->run();
 } catch (Exception $e) {
     // todo - log exceptions
+}
+
+function parseWaterValue(string $str) {
+    $result = null;
+    preg_match('/вода\s*(\d+)\s*кв\s*(\d+)/i', $str, $arr);
+    if( !empty($arr) ) {
+        $result = [
+            'value' => $arr[1],
+            'flat' => $arr[2]
+        ];
+    }
+    return $result;
 }
