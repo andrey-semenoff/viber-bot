@@ -17,19 +17,34 @@ try {
     $bot = new Bot(['token' => $apiKey]);
     $bot
     ->onConversation(function ($event) use ($bot, $botSender) {
-        $user = $event->getUser();
-        $username = $user->getName();
+        $username = $event->getUser()->getName();
         // this event fires if user open chat, you can return "welcome message"
         // to user, but you can't send more messages!
         $msg = 'Здравствуйте';
         if( $username ) {
-            $msg .= ', ' . $username;
+            $msg .= ', ' . $username . '!';
         } else {
             $msg .= '!';
         }
+
+        $msg .= "\nЕсли Вам нужна помощь - выберите подходящий вопрос из предложенных внизу!";
+
         return (new \Viber\Api\Message\Text())
             ->setSender($botSender)
-            ->setText($msg);
+            ->setReceiver($event->getSender()->getId())
+            ->setText($msg)
+            ->setKeyboard(
+                (new \Viber\Api\Keyboard)->setButtons([
+                    (new \Viber\Api\Keyboard\Button())
+                        ->setColumns(6)
+                        ->setText('<font color="#fff">Как передать показания воды?</font>')
+                        ->setTextSize('large')
+                        ->setTextHAlign('center')
+                        ->setTextVAlign('middle')
+                        ->setBgColor('#17a2b8')
+                        ->setActionBody("help Чтобы передать показания воды введите сообщение в следующем формате:\n\nвода X кв Y\n\nгде Х - показания водомера, Y - номер квартиры.")
+                ])
+            );
     })
 
     ->onText('/^вода\s*(\d+)\s*кв\s*(\d+)$/iu', function ($event) use ($bot, $botSender) {
@@ -116,7 +131,7 @@ try {
     })
 
     ->onText('/^(?!вода\s*|help\s|confirmed\s|canceled\s).*$/iu', function ($event) use ($bot, $botSender) {
-        $answer = "Здравствуйте!\nЕсли Вам нужна помощь - выберите подходящий вариант из предложенных внизу!";
+        $answer = "Если Вам нужна помощь - выберите подходящий вопрос из предложенных внизу!";
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
                 ->setSender($botSender)
