@@ -103,7 +103,7 @@ try {
 
     ->onText('/^help\s(.*\s?)$/iu', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
-        $hint = parseSingleValue('/^help\s*(.*)$/iu', $reply);
+        $hint = parseSingleValue('/^help\s(.*\s?)$/iu', $reply);
         $answer = "Извините, я не могу разобрать ваше сообщение!\nПопробуйте еще раз!";
         if( $hint ) {
             $answer = $hint;
