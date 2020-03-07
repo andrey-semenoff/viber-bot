@@ -33,7 +33,7 @@ try {
             ->setSender($botSender)
             ->setText($msg);
     })
-        
+
     ->onText('/^вода\s*(\d+)\s*кв\s*(\d+)$/iu', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
         $data = parseWaterValue('/^вода\s*(\d+)\s*кв\s*(\d+)$/iu', $reply);
@@ -116,7 +116,7 @@ try {
         );
     })
 
-    ->onText('/.*/', function ($event) use ($bot, $botSender) {
+    ->onText('/^(?!вода\s*|help\s|confirmed|canceled\s\s).*$/', function ($event) use ($bot, $botSender) {
         $answer = "Здравствуйте!\nЕсли Вам нужна помощь - выберите подходящий вариант из предложенных внизу!";
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
@@ -128,7 +128,7 @@ try {
                         ->setButtons([
                             (new \Viber\Api\Keyboard\Button())
                                 ->setColumns(6)
-                                ->setText('<font color="#fff">Передать показания воды</font>')
+                                ->setText('<font color="#fff">Как передать показания воды?</font>')
                                 ->setTextSize('large')
                                 ->setTextHAlign('center')
                                 ->setTextVAlign('middle')
