@@ -17,7 +17,7 @@ try {
     $bot = new Bot(['token' => $apiKey]);
     $bot
     ->onConversation(function ($event) use ($bot, $botSender) {
-        $user = $bot->getClient()->getUserDetails($event->getSender()->getId())->getData();
+        $user = $event->getUser();
         // this event fires if user open chat, you can return "welcome message"
         // to user, but you can't send more messages!
         $msg = 'Здравствуйте';
