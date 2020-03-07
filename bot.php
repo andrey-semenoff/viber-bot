@@ -100,7 +100,7 @@ try {
         );
     })
 
-    ->onText('/^help\s*(.*)$/', function ($event) use ($bot, $botSender) {
+    ->onText('/^help\s(.*)$/iu', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
         $hint = parseSingleValue('/^help\s*(.*)$/iu', $reply);
         $answer = "Извините, я не могу разобрать ваше сообщение!\nПопробуйте еще раз!";
@@ -116,7 +116,7 @@ try {
         );
     })
 
-    ->onText('/^(?!вода\s*|help\s|confirmed|canceled\s\s).*$/', function ($event) use ($bot, $botSender) {
+    ->onText('/^(?!вода\s*|help\s|confirmed|canceled\s\s).*$/iu', function ($event) use ($bot, $botSender) {
         $answer = "Здравствуйте!\nЕсли Вам нужна помощь - выберите подходящий вариант из предложенных внизу!";
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
