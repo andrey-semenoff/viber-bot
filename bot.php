@@ -7,11 +7,10 @@ use Viber\Api\Sender;
 
 $apiKey = '4b2c8ae9d8e7dd17-a4ddce61389be519-78f5da28d7dc8cd3';
 
-// reply name
 $botSender = new Sender([
     'name' => 'Renessans bot',
-    // 'avatar' => 'https://developers.viber.com/img/favicon.ico',
-    'avatar' => 'https://miro.medium.com/fit/c/256/256/1*Ro9Yq4D5W85QagF2rFTivw.png',
+//    'avatar' => 'https://miro.medium.com/fit/c/256/256/1*Ro9Yq4D5W85QagF2rFTivw.png',
+    'avatar' => 'https://renessans-viber-bot.herokuapp.com/images/avatar.png',
 ]);
 
 try {
@@ -34,13 +33,12 @@ try {
             ->setSender($botSender)
             ->setText($msg);
     })
-    ->onText('/^вода\s*(\d+)\s*кв\s*(\d+)$/i', function ($event) use ($bot, $botSender) {
+    ->onText('/^вода\s*(\d+)\s*кв\s*(\d+)$/iu', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
-        var_dump($reply);
         $data = parseWaterValue($reply);
         $answer = "Извините, я не могу разобрать ваши показания воды! Попробуйте еще раз!";
-        if( $reply ) {
-            $answer = "Подтвердите правильность данных! Вы собираетесь передать показания воды: '{$data['value']}' для квартиры: '{$data['flat']}' - $reply";
+        if( $data ) {
+            $answer = "Подтвердите правильность данных!<br>Вы собираетесь <u>передать показания воды</u>: <b>'{$data['value']}'</b> для квартиры <b>№'{$data['flat']}'</b>";
         }
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
@@ -52,23 +50,27 @@ try {
                 ->setButtons([
                     (new \Viber\Api\Keyboard\Button())
                     ->setColumns(3)
-                    ->setText('Отмена')
+                    ->setText('<span style="color: #fff;">Отмена</span>')
+                    ->setBgColor('#c82333')
+                    ->setImage('https://renessans-viber-bot.herokuapp.com/images/yes.png')
                     ->setActionBody("canceled вода {$data['value']} кв {$data['flat']}"),
                     (new \Viber\Api\Keyboard\Button())
                     ->setColumns(3)
-                    ->setText('Подтверждаю')
+                    ->setText('<span style="color: #fff;">Подтверждаю</span>')
+                    ->setBgColor('#28a745')
+                        ->setImage('https://renessans-viber-bot.herokuapp.com/images/no.png')
                     ->setActionBody("confirmed вода {$data['value']} кв {$data['flat']}"),
                 ])
             )
         );
     })
-    ->onText('/^confirmed\sвода\s*(\d+)\s*кв\s*(\d+)$/i', function ($event) use ($bot, $botSender) {
+    ->onText('/^confirmed\sвода\s*(\d+)\s*кв\s*(\d+)$/iu', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
         $data = parseWaterValue($reply);
-//        $answer = "Извините, я не могу разобрать ваши показания воды! Попробуйте еще раз!";
-//        if( $reply ) {
-            $answer = "Спасибо! Приняты показания воды: '{$data['value']}' для квартиры: '{$data['flat']}'";
-//        }
+        $answer = "Извините, я не могу разобрать ваши показания воды!<br>Попробуйте еще раз!";
+        if( $data ) {
+            $answer = "Спасибо!<br>Приняты показания воды: <b>'{$data['value']}'</b> для квартиры: <b>'{$data['flat']}'</b>";
+        }
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
             ->setSender($botSender)
@@ -76,13 +78,13 @@ try {
             ->setText($answer)
         );
     })
-    ->onText('/^canceled\sвода\s*(\d+)\s*кв\s*(\d+)$/i', function ($event) use ($bot, $botSender) {
+    ->onText('/^canceled\sвода\s*(\d+)\s*кв\s*(\d+)$/iu', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
         $data = parseWaterValue($reply);
-//        $answer = "Извините, я не могу разобрать ваши показания воды! Попробуйте еще раз!";
-//        if( $reply ) {
-            $answer = "Вы отменили передачу показания воды: '{$data['value']}' для квартиры: '{$data['flat']}'";
-//        }
+        $answer = "Извините, я не могу разобрать ваши показания воды!<br>Попробуйте еще раз!";
+        if( $data ) {
+            $answer = "Вы отменили передачу показания воды: <b>'{$data['value']}'</b> для квартиры: <b>'{$data['flat']}'</b>";
+        }
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
             ->setSender($botSender)
