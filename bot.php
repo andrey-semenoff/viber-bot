@@ -101,9 +101,9 @@ try {
         );
     })
 
-    ->onText('/^help\s(.*\s?)$/iu', function ($event) use ($bot, $botSender) {
+    ->onText('/^help\s/iu', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
-        $hint = parseSingleValue('/^help\s(.*\s?)$/iu', $reply);
+        $hint = parseHelpString('help ', $reply);
         $answer = "Извините, я не могу разобрать ваше сообщение!\nПопробуйте еще раз!";
         if( $hint ) {
             $answer = $hint;
@@ -158,6 +158,15 @@ function parseWaterValue(string $regex, string $str) {
 function parseSingleValue(string $regex, string $str) {
     $result = null;
     preg_match($regex, $str, $arr);
+    if( !empty($arr) ) {
+        $result = $arr[1];
+    }
+    return $result;
+}
+
+function parseHelpString(string $regex, string $str) {
+    $result = null;
+    $arr = explode($regex, $str);
     if( !empty($arr) ) {
         $result = $arr[1];
     }
