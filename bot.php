@@ -34,7 +34,7 @@ try {
             ->setSender($botSender)
             ->setText($msg);
     })
-    ->onText('/вода\s*(\d+)\s*кв\s*(\d+)/i', function ($event) use ($bot, $botSender) {
+    ->onText('/^вода\s*(\d+)\s*кв\s*(\d+)$/i', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
         var_dump($reply);
         $data = parseWaterValue($reply);
@@ -62,7 +62,7 @@ try {
             )
         );
     })
-    ->onText('/confirmed\sвода\s*(\d+)\s*кв\s*(\d+)/i', function ($event) use ($bot, $botSender) {
+    ->onText('/^confirmed\sвода\s*(\d+)\s*кв\s*(\d+)$/i', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
         $data = parseWaterValue($reply);
 //        $answer = "Извините, я не могу разобрать ваши показания воды! Попробуйте еще раз!";
@@ -76,7 +76,7 @@ try {
             ->setText($answer)
         );
     })
-    ->onText('/canceled\sвода\s*(\d+)\s*кв\s*(\d+)/i', function ($event) use ($bot, $botSender) {
+    ->onText('/^canceled\sвода\s*(\d+)\s*кв\s*(\d+)$/i', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
         $data = parseWaterValue($reply);
 //        $answer = "Извините, я не могу разобрать ваши показания воды! Попробуйте еще раз!";
