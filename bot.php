@@ -24,7 +24,7 @@ try {
             ->setSender($botSender)
             ->setText("Can i help you?");
     })
-    ->onText('|whois .*|si', function ($event) use ($bot, $botSender) {
+    ->onText('/whois .*/si', function ($event) use ($bot, $botSender) {
         // match by template, for example "whois Bogdaan"
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
@@ -33,7 +33,7 @@ try {
             ->setText("I do not know )")
         );
     })
-    ->onText('.*', function ($event) use ($bot, $botSender) {
+    ->onText('/.*/i', function ($event) use ($bot, $botSender) {
         // match by template, for example "whois Bogdaan"
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
