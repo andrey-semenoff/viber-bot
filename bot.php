@@ -35,7 +35,7 @@ try {
             ->setText($msg);
     })
     ->onText('/вода\s*(\d+)/i', function ($event) use ($bot, $botSender) {
-        $reply = $event->message->text;
+        $reply = $event->message->getMessage();
         var_dump($reply);
         $answer = "Извините, я не могу разобрать ваши показания воды! Попробуйте еще раз!";
         if( $reply ) {
