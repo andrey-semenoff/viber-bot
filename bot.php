@@ -36,9 +36,9 @@ try {
     ->onText('/^вода\s*(\d+)\s*кв\s*(\d+)$/iu', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
         $data = parseWaterValue('/^вода\s*(\d+)\s*кв\s*(\d+)$/iu', $reply);
-        $answer = "Извините, я не могу разобрать ваши показания воды! Попробуйте еще раз!";
+        $answer = "Извините, я не могу разобрать ваши показания воды!\nПопробуйте еще раз!";
         if( $data ) {
-            $answer = "Подтвердите правильность данных!\nВы собираетесь передать показания воды: *'{$data['value']}'* для квартиры *№'{$data['flat']}'*";
+            $answer = "Подтвердите правильность данных!\nВы собираетесь передать показания воды: <b>'{$data['value']}'</b> для квартиры <b>№'{$data['flat']}'</b>";
         }
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
@@ -73,9 +73,9 @@ try {
     ->onText('/^confirmed\sвода\s*(\d+)\s*кв\s*(\d+)$/iu', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
         $data = parseWaterValue('/^confirmed\sвода\s*(\d+)\s*кв\s*(\d+)$/iu', $reply);
-        $answer = "Извините, я не могу разобрать ваши показания воды! Попробуйте еще раз!";
+        $answer = "Извините, я не могу разобрать ваши показания воды!\nПопробуйте еще раз!";
         if( $data ) {
-            $answer = "Спасибо! Приняты показания воды: *'{$data['value']}'* для квартиры: *'{$data['flat']}'*";
+            $answer = "Спасибо!\nПриняты показания воды: <b>'{$data['value']}'</b> для квартиры: '{$data['flat']}'";
         }
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
@@ -87,7 +87,7 @@ try {
     ->onText('/^canceled\sвода\s*(\d+)\s*кв\s*(\d+)$/iu', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
         $data = parseWaterValue('/^canceled\sвода\s*(\d+)\s*кв\s*(\d+)$/iu', $reply);
-        $answer = "Извините, я не могу разобрать ваши показания воды! Попробуйте еще раз!";
+        $answer = "Извините, я не могу разобрать ваши показания воды!\nПопробуйте еще раз!";
         if( $data ) {
             $answer = "Вы отменили передачу показания воды: '{$data['value']}' для квартиры: '{$data['flat']}'";
         }
