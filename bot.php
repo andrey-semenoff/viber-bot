@@ -31,7 +31,6 @@ try {
 
         return (new \Viber\Api\Message\Text())
             ->setSender($botSender)
-            ->setReceiver($event->getSender()->getId())
             ->setText($msg)
             ->setKeyboard(
                 (new \Viber\Api\Keyboard)->setButtons([
