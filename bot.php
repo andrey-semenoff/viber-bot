@@ -35,7 +35,7 @@ try {
     })
     ->onText('/^вода\s*(\d+)\s*кв\s*(\d+)$/iu', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
-        $data = parseWaterValue($reply);
+        $data = parseWaterValue('/^вода\s*(\d+)\s*кв\s*(\d+)$/iu', $reply);
         $answer = "Извините, я не могу разобрать ваши показания воды! Попробуйте еще раз!";
         if( $data ) {
             $answer = "Подтвердите правильность данных!<br>Вы собираетесь <u>передать показания воды</u>: <b>'{$data['value']}'</b> для квартиры <b>№'{$data['flat']}'</b>";
@@ -50,15 +50,21 @@ try {
                 ->setButtons([
                     (new \Viber\Api\Keyboard\Button())
                     ->setColumns(3)
-                    ->setText('<span style="color: #fff;">Отмена</span>')
+                    ->setText('<font color="#fff">Отмена</font>')
+                    ->setTextSize('large')
+                    ->setTextHAlign('center')
+                    ->setTextVAlign('middle')
                     ->setBgColor('#c82333')
-                    ->setImage('https://renessans-viber-bot.herokuapp.com/images/yes.png')
+//                    ->setImage('https://renessans-viber-bot.herokuapp.com/images/yes.png')
                     ->setActionBody("canceled вода {$data['value']} кв {$data['flat']}"),
                     (new \Viber\Api\Keyboard\Button())
                     ->setColumns(3)
-                    ->setText('<span style="color: #fff;">Подтверждаю</span>')
+                    ->setText('<font color="#fff">Подтверждаю</font>')
+                    ->setTextSize('large')
+                    ->setTextHAlign('center')
+                    ->setTextVAlign('middle')
                     ->setBgColor('#28a745')
-                        ->setImage('https://renessans-viber-bot.herokuapp.com/images/no.png')
+//                    ->setImage('https://renessans-viber-bot.herokuapp.com/images/no.png')
                     ->setActionBody("confirmed вода {$data['value']} кв {$data['flat']}"),
                 ])
             )
@@ -66,7 +72,7 @@ try {
     })
     ->onText('/^confirmed\sвода\s*(\d+)\s*кв\s*(\d+)$/iu', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
-        $data = parseWaterValue($reply);
+        $data = parseWaterValue('/^confirmed\sвода\s*(\d+)\s*кв\s*(\d+)$/iu', $reply);
         $answer = "Извините, я не могу разобрать ваши показания воды!<br>Попробуйте еще раз!";
         if( $data ) {
             $answer = "Спасибо!<br>Приняты показания воды: <b>'{$data['value']}'</b> для квартиры: <b>'{$data['flat']}'</b>";
@@ -80,7 +86,7 @@ try {
     })
     ->onText('/^canceled\sвода\s*(\d+)\s*кв\s*(\d+)$/iu', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
-        $data = parseWaterValue($reply);
+        $data = parseWaterValue('/^canceled\sвода\s*(\d+)\s*кв\s*(\d+)$/iu', $reply);
         $answer = "Извините, я не могу разобрать ваши показания воды!<br>Попробуйте еще раз!";
         if( $data ) {
             $answer = "Вы отменили передачу показания воды: <b>'{$data['value']}'</b> для квартиры: <b>'{$data['flat']}'</b>";
@@ -124,9 +130,9 @@ try {
     // todo - log exceptions
 }
 
-function parseWaterValue(string $str) {
+function parseWaterValue(string $regex, string $str) {
     $result = null;
-    preg_match('/вода\s*(\d+)\s*кв\s*(\d+)/i', $str, $arr);
+    preg_match($regex, $str, $arr);
     if( !empty($arr) ) {
         $result = [
             'value' => $arr[1],
