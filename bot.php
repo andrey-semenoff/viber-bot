@@ -18,11 +18,12 @@ try {
     $bot
     ->onConversation(function ($event) use ($bot, $botSender) {
         $user = $event->getUser();
+        $username = $user->getName();
         // this event fires if user open chat, you can return "welcome message"
         // to user, but you can't send more messages!
         $msg = 'Здравствуйте';
-        if( $user['name'] ) {
-            $msg .= ', ' . $user['name'];
+        if( $username ) {
+            $msg .= ', ' . $username;
         } else {
             $msg .= '!';
         }
