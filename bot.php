@@ -116,7 +116,7 @@ try {
         );
     })
 
-    ->onText('/^(?!вода\s*|help\s|confirmed|canceled\s\s).*$/iu', function ($event) use ($bot, $botSender) {
+    ->onText('/^(?!вода\s*|help\s|confirmed\s|canceled\s).*$/iu', function ($event) use ($bot, $botSender) {
         $answer = "Здравствуйте!\nЕсли Вам нужна помощь - выберите подходящий вариант из предложенных внизу!";
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
