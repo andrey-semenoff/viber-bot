@@ -56,7 +56,7 @@ try {
                     ->setTextHAlign('center')
                     ->setTextVAlign('middle')
                     ->setBgColor('#c82333')
-                    ->setActionBody("canceled вода {$data['value']} кв {$data['flat']}"),
+                    ->setActionBody("canceled кв {$data['flat']}"),
 
                     (new \Viber\Api\Keyboard\Button())
                     ->setColumns(3)
@@ -86,9 +86,9 @@ try {
         );
     })
 
-    ->onText('/^canceled\sкв\s*(\d+)$/iu', function ($event) use ($bot, $botSender) {
+    ->onText('/^canceled\sкв\s(\d+)$/iu', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
-        $flat = parseSingleValue('/^canceled\sкв\s*(\d+)$/iu', $reply);
+        $flat = parseSingleValue('/^canceled\sкв\s(\d+)$/iu', $reply);
         $answer = "Извините, я не могу разобрать ваш ответ!\nПопробуйте еще раз!";
         if( $flat ) {
             $answer = "Вы отменили передачу показаний для квартиры № {$flat}";
@@ -133,7 +133,7 @@ try {
                             ->setTextHAlign('center')
                             ->setTextVAlign('middle')
                             ->setBgColor('#17a2b8')
-                            ->setActionBody("help Чтобы передать показания воды введите сообщение в следующем формате:\nвода X кв Y\nгде Х - показания водомера, Y - номер квартиры.")
+                            ->setActionBody("help Чтобы передать показания воды введите сообщение в следующем формате:\n\nвода X кв Y\n\nгде Х - показания водомера, Y - номер квартиры.")
                     ])
                 )
         );
