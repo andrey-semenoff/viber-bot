@@ -38,7 +38,7 @@ try {
         $data = parseWaterValue('/^вода\s*(\d+)\s*кв\s*(\d+)$/iu', $reply);
         $answer = "Извините, я не могу разобрать ваши показания воды!\nПопробуйте еще раз!";
         if( $data ) {
-            $answer = "Подтвердите правильность данных!\nВы собираетесь передать показания воды: <b>'{$data['value']}'</b> для квартиры <b>№'{$data['flat']}'</b>";
+            $answer = "Подтвердите правильность данных!\nВы собираетесь передать следующие показания для квартиры №{$data['flat']}:\n- вода: {$data['value']}";
         }
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
@@ -55,7 +55,6 @@ try {
                     ->setTextHAlign('center')
                     ->setTextVAlign('middle')
                     ->setBgColor('#c82333')
-//                    ->setImage('https://renessans-viber-bot.herokuapp.com/images/yes.png')
                     ->setActionBody("canceled вода {$data['value']} кв {$data['flat']}"),
                     (new \Viber\Api\Keyboard\Button())
                     ->setColumns(3)
@@ -64,7 +63,6 @@ try {
                     ->setTextHAlign('center')
                     ->setTextVAlign('middle')
                     ->setBgColor('#28a745')
-//                    ->setImage('https://renessans-viber-bot.herokuapp.com/images/no.png')
                     ->setActionBody("confirmed вода {$data['value']} кв {$data['flat']}"),
                 ])
             )
@@ -75,7 +73,7 @@ try {
         $data = parseWaterValue('/^confirmed\sвода\s*(\d+)\s*кв\s*(\d+)$/iu', $reply);
         $answer = "Извините, я не могу разобрать ваши показания воды!\nПопробуйте еще раз!";
         if( $data ) {
-            $answer = "Спасибо!\nПриняты показания воды: <b>'{$data['value']}'</b> для квартиры: '{$data['flat']}'";
+            $answer = "Спасибо!\nПриняты показания для квартиры №{$data['flat']}:\n- вода: {$data['value']}";
         }
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
