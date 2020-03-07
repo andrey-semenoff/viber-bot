@@ -33,10 +33,11 @@ try {
             ->setSender($botSender)
             ->setText($msg);
     })
+        
     ->onText('/^вода\s*(\d+)\s*кв\s*(\d+)$/iu', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
         $data = parseWaterValue('/^вода\s*(\d+)\s*кв\s*(\d+)$/iu', $reply);
-        $answer = "Извините, я не могу разобрать ваши показания воды!\nПопробуйте еще раз!";
+        $answer = "Извините, я не могу разобрать ваши показания!\nПопробуйте еще раз!";
         if( $data ) {
             $answer = "Подтвердите правильность данных!\nВы собираетесь передать следующие показания для квартиры №{$data['flat']}:\n- вода: {$data['value']}";
         }
@@ -68,10 +69,11 @@ try {
             )
         );
     })
+
     ->onText('/^confirmed\sвода\s*(\d+)\s*кв\s*(\d+)$/iu', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
         $data = parseWaterValue('/^confirmed\sвода\s*(\d+)\s*кв\s*(\d+)$/iu', $reply);
-        $answer = "Извините, я не могу разобрать ваши показания воды!\nПопробуйте еще раз!";
+        $answer = "Извините, я не могу разобрать ваши показания!\nПопробуйте еще раз!";
         if( $data ) {
             $answer = "Спасибо!\nПриняты показания для квартиры №{$data['flat']}:\n- вода: {$data['value']}";
         }
@@ -82,12 +84,13 @@ try {
             ->setText($answer)
         );
     })
-    ->onText('/^canceled\sвода\s*(\d+)\s*кв\s*(\d+)$/iu', function ($event) use ($bot, $botSender) {
+
+    ->onText('/^canceled\sкв\s*(\d+)$/iu', function ($event) use ($bot, $botSender) {
         $reply = $event->getMessage()->getText();
-        $data = parseWaterValue('/^canceled\sвода\s*(\d+)\s*кв\s*(\d+)$/iu', $reply);
-        $answer = "Извините, я не могу разобрать ваши показания воды!\nПопробуйте еще раз!";
-        if( $data ) {
-            $answer = "Вы отменили передачу показания воды: '{$data['value']}' для квартиры: '{$data['flat']}'";
+        $flat = parseSingleValue('/^canceled\sкв\s*(\d+)$/iu', $reply);
+        $answer = "Извините, я не могу разобрать ваш ответ!\nПопробуйте еще раз!";
+        if( $flat ) {
+            $answer = "Вы отменили передачу показаний для квартиры №{$flat}";
         }
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
@@ -96,33 +99,45 @@ try {
             ->setText($answer)
         );
     })
-    ->onText('/whois .*/si', function ($event) use ($bot, $botSender) {
-        // match by template, for example "whois Bogdaan"
+
+    ->onText('/^help\s*(.*)$/', function ($event) use ($bot, $botSender) {
+        $reply = $event->getMessage()->getText();
+        $hint = parseSingleValue('/^help\s*(.*)$/iu', $reply);
+        $answer = "Извините, я не могу разобрать ваше сообщение!\nПопробуйте еще раз!";
+        if( $hint ) {
+            $answer = $hint;
+        }
+
         $bot->getClient()->sendMessage(
             (new \Viber\Api\Message\Text())
-            ->setSender($botSender)
-            ->setReceiver($event->getSender()->getId())
-            ->setText("I do not know )")
+                ->setSender($botSender)
+                ->setReceiver($event->getSender()->getId())
+                ->setText($answer)
         );
     })
-//    ->onText('/.*/i', function ($event) use ($bot, $botSender) {
-//        // match by template, for example "whois Bogdaan"
-//        $bot->getClient()->sendMessage(
-//            (new \Viber\Api\Message\Text())
-//            ->setSender($botSender)
-//            ->setReceiver($event->getSender()->getId())
-//            ->setText("Select action")
-//            ->setKeyboard(
-//                (new \Viber\Api\Keyboard)
-//                ->setButtons([
-//                    (new \Viber\Api\Keyboard\Button())
-//                    ->setColumns(6)
-//                    ->setText('Click me')
-//                    ->setActionBody('Clicked!')
-//                ])
-//            )
-//        );
-//    })
+
+    ->onText('/.*/', function ($event) use ($bot, $botSender) {
+        $answer = "Здравствуйте!\nЕсли Вам нужна помощь - выберите подходящий вариант из предложенных внизу!";
+        $bot->getClient()->sendMessage(
+            (new \Viber\Api\Message\Text())
+                ->setSender($botSender)
+                ->setReceiver($event->getSender()->getId())
+                ->setText($answer)
+                ->setKeyboard(
+                    (new \Viber\Api\Keyboard)
+                        ->setButtons([
+                            (new \Viber\Api\Keyboard\Button())
+                                ->setColumns(6)
+                                ->setText('<font color="#fff">Передать показания воды</font>')
+                                ->setTextSize('large')
+                                ->setTextHAlign('center')
+                                ->setTextVAlign('middle')
+                                ->setBgColor('#17a2b8')
+                                ->setActionBody("help Чтобы передать показания воды введите сообщение в следующем формате:\nвода X кв Y\nгде Х - показания водомера, Y - номер квартиры.")
+                        ])
+                )
+        );
+    })
     ->run();
 } catch (Exception $e) {
     // todo - log exceptions
@@ -136,6 +151,15 @@ function parseWaterValue(string $regex, string $str) {
             'value' => $arr[1],
             'flat' => $arr[2]
         ];
+    }
+    return $result;
+}
+
+function parseSingleValue(string $regex, string $str) {
+    $result = null;
+    preg_match($regex, $str, $arr);
+    if( !empty($arr) ) {
+        $result = $arr[1];
     }
     return $result;
 }
